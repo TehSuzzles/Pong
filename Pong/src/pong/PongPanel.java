@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.Stroke;
 import java.awt.BasicStroke;
+import java.awt.Font;
 
 
 public class PongPanel extends JPanel implements ActionListener, KeyListener{
@@ -19,6 +20,9 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener{
 	GameState gameState = GameState.Initialising;
 	Ball ball;
 	Paddle paddle1, paddle2;
+	private final static int POINTS_TO_WIN = 3;
+	int player1Score = 0, player2Score = 0;
+	Player gameWinner;
 	
 	public PongPanel() {
 		setBackground(BACKGROUND_COLOUR);
@@ -29,7 +33,7 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener{
 		setFocusable(true);
 		
 	}
-	
+
 public void createObjects() {
 	ball = new Ball(getWidth(), getHeight());
 	paddle1 = new Paddle(Player.One, getWidth(), getHeight());
@@ -51,6 +55,7 @@ private void update() {
 		moveObject(ball);
 		checkWallBounce();
 		checkPaddleBounce();
+		checkWin();
 		break;
 	}
 	case GameOver: {
@@ -59,6 +64,20 @@ private void update() {
 	}
 }
 
+private void checkWin() {
+	if (player1Score >= POINTS_TO_WIN) {
+		gameWinner = Player.One;
+		gameState = GameState.GameOver;
+	}
+}
+public void addScore(Player player) {
+	if(player == Player.One) {
+		player1Score++;
+	}else if (player == Player.Two){
+		player2Score++;
+	}
+}
+	
 public void resetBall() {
 	ball.resetToInitialPosition();
 }
@@ -80,6 +99,20 @@ private void paintSprite(Graphics g, Sprite sprite) {
 	
 }
 
+private void paintScores(Graphics g) {
+	int xPadding = 100;
+	int yPadding = 100;
+	int fontSize = 50;
+	Font scoreFont = new Font ("Serif", Font.BOLD, fontSize);
+	String leftScore = Integer.toString(player1Score);
+	String rightScore = Integer.toString(player2Score);
+	g.setFont(scoreFont);
+	g.drawString(leftScore,  xPadding, yPadding);
+	g.drawString(rightScore, getWidth()-xPadding, yPadding);
+	}
+
+
+
 @Override
 public void paintComponent(Graphics g) {
 	super.paintComponent(g);
@@ -88,6 +121,7 @@ public void paintComponent(Graphics g) {
 		paintSprite(g, ball);
 		paintSprite(g, paddle1);
 		paintSprite(g, paddle2);
+		paintScores(g);
 	}
 	
 }
@@ -103,10 +137,12 @@ private void checkWallBounce() {
 	if(ball.getXPosition() <=0) {
 		//Hit left side of screen
 		ball.setXVelocity(-ball.getXVelocity());
+		addScore(Player.Two);
 		resetBall();
 	} else if (ball.getXPosition() >= getWidth() - ball.getWidth()) {
 		// Hit right side of screen
 		ball.setXVelocity(-ball.getXVelocity());
+		addScore(Player.One);
 		resetBall();
 	}
 	if(ball.getYPosition() <= 0 || ball.getYPosition() >= getHeight() - ball.getHeight()) {
