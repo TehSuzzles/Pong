@@ -23,14 +23,13 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener{
 		timer.start();
 		
 	}
-	private void update() {
-		
-	}
-	
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		paintDottedLine(g);
+		if(gameInitialised) {
+			paintSprite(g, ball);
+		}
 	}
 	
 	private void paintDottedLine(Graphics g) {
@@ -41,9 +40,28 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener{
 		g2d.drawLine(getWidth() / 2, 0, getWidth() / 2, getHeight());
 		g2d.dispose();
 	}
+	boolean gameInitialised = false;
+	Ball ball;
 	
+public void createObjects() {
+	ball = new Ball(getWidth(), getHeight());
+}
+	
+private void update() {
+	if (!gameInitialised) {
+		createObjects();
+		gameInitialised = true;
+	}
+}
 
-	@Override
+private void paintSprite(Graphics g, Sprite sprite) {
+	g.setColor(sprite.getColour());
+	g.fillRect(sprite.getXPosition(), sprite.getYPosition(), sprite.getWidth(), sprite.getHeight());
+	
+}
+
+
+@Override
 	public void keyTyped(KeyEvent event) {
 		// TODO Auto-generated method stub
 		

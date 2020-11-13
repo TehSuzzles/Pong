@@ -1,27 +1,29 @@
 package pong;
 
+import java.awt.Color;
+import java.awt.Rectangle;
+
 public class Sprite {
 private int xPosition, yPosition, xVelocity, yVelocity, width, height;
+public int initialXPosition, initialYPosition;
+private Color colour;
 
 public int getXPosition() { return xPosition;}
-public int geYXPosition() { return yPosition;}
+public int getYPosition() { return yPosition;}
 public int getXVelocity() { return xVelocity;}
 public int getyVelocity() { return yVelocity;}
 
+
 public int getWidth() { return width;}
 public int getHeight() { return height;}
+public Color getColour() {return colour;}
 
-public int initialXPosition, initialYPosition;
 
-public void setinitialPosition(int initialX, int initialY) {
+public void setInitialPosition(int initialX, int initialY) {
 	initialXPosition = initialX;
 	initialYPosition = initialY;
 }
 
-public void resetToinitialPosition() {
-	setXPosition(initialXPosition);
-	setYPosition(initialYPosition);
-}
 
 public void setXPosition(int newX) {
 	xPosition = newX;}
@@ -53,11 +55,22 @@ public void setXVelocity(int newXVelocity) {
 	xVelocity = newXVelocity;
 }
 public void setYVelocity(int newYVelocity) {
-	xVelocity = newYVelocity;
+	yVelocity = newYVelocity;
 }
 public void setWidth(int newWidth) {
 	width = newWidth;
 }
 public void setHeight(int newHeight) {
 	height = newHeight;
+}
+public void setColour(Color newColour) {
+	colour = newColour;
+}
+public void resetToInitialPosition() {
+	setXPosition(initialXPosition);
+	setYPosition(initialYPosition);
+}
+public Rectangle getRectangle() {
+	return new Rectangle(getXPosition(), getYPosition(), getWidth(), getHeight());
+}
 }
