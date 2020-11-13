@@ -25,6 +25,9 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener{
 		Timer timer = new Timer(TIMER_DELAY, this);
 		timer.start();
 		
+		addKeyListener(this);
+		setFocusable(true);
+		
 	}
 	
 public void createObjects() {
@@ -38,9 +41,16 @@ private void update() {
 	case Initialising :{
 	createObjects();
 	gameState = GameState.Playing;
+	ball.setXVelocity(BALL_MOVEMENT_SPEED);
+	ball.setYVelocity(BALL_MOVEMENT_SPEED);
 	break;
 	}
 	case Playing: {
+		moveObject(paddle1);
+		moveObject(paddle2);
+		moveObject(ball);
+		checkWallBounce();
+		checkPaddleBounce();
 		break;
 	}
 	case GameOver: {
@@ -48,6 +58,12 @@ private void update() {
 		}
 	}
 }
+
+public void resetBall() {
+	ball.resetToInitialPosition();
+}
+
+
 
 
 private void paintDottedLine(Graphics g) {
@@ -75,6 +91,43 @@ public void paintComponent(Graphics g) {
 	}
 	
 }
+
+private final static int BALL_MOVEMENT_SPEED = 2;
+
+		public void moveObject(Sprite object) {
+	object.setXPosition(object.getXPosition() + object.getXVelocity(),getWidth());
+	object.setYPosition(object.getYPosition() + object.getyVelocity(),getHeight());
+}
+
+private void checkWallBounce() {
+	if(ball.getXPosition() <=0) {
+		//Hit left side of screen
+		ball.setXVelocity(-ball.getXVelocity());
+		resetBall();
+	} else if (ball.getXPosition() >= getWidth() - ball.getWidth()) {
+		// Hit right side of screen
+		ball.setXVelocity(-ball.getXVelocity());
+		resetBall();
+	}
+	if(ball.getYPosition() <= 0 || ball.getYPosition() >= getHeight() - ball.getHeight()) {
+		//hit top of screen
+		ball.setYVelocity(-ball.getyVelocity());
+		
+		
+	}
+		
+}
+
+private void checkPaddleBounce() {
+	if(ball.getXVelocity() < 0 && ball.getRectangle().intersects(paddle1.getRectangle())) {
+		ball.setXVelocity(BALL_MOVEMENT_SPEED);
+	}
+	if(ball.getXVelocity() > 0 && ball.getRectangle().intersects(paddle2.getRectangle())) {
+		ball.setXVelocity(-BALL_MOVEMENT_SPEED);
+	}
+}
+
+
 @Override
 	public void keyTyped(KeyEvent event) {
 		// TODO Auto-generated method stub
@@ -83,14 +136,28 @@ public void paintComponent(Graphics g) {
 
 	@Override
 	public void keyPressed(KeyEvent event) {
-		// TODO Auto-generated method stub
+		if(event.getKeyCode() == KeyEvent.VK_UP) {
+			paddle2.setYVelocity(-1);
+		} else if(event.getKeyCode() == KeyEvent.VK_DOWN) {
+			paddle2.setYVelocity(1);
+		}
+		if(event.getKeyCode() == KeyEvent.VK_W) {
+			paddle1.setYVelocity(-1);
+		} else if(event.getKeyCode() == KeyEvent.VK_S) {
+			paddle1.setYVelocity(1);
+		}
 		
 	}
 
 	@Override
 	public void keyReleased(KeyEvent event) {
-		// TODO Auto-generated method stub
-		
+	if(event.getKeyCode() == KeyEvent.VK_UP || event.getKeyCode() == KeyEvent.VK_DOWN){
+		paddle2.setYVelocity(0);}
+		if(event.getKeyCode() == KeyEvent.VK_W || event.getKeyCode() == KeyEvent.VK_S){
+			paddle1.setYVelocity(0);
+		}
+			
+	
 	}
 
 	@Override
